@@ -1,9 +1,7 @@
-# VISUAL3D2D 
-## [RUS]
+## VISUAL3D2D 
 Небольшая графическая библиотека для отображения текста или информации.
-## [ENG]
-A small graphics library for displaying text or information.
--------------
+## Инструкция по установке 
+[VISUAL3D2D.lua](../master/VISUAL3D2D.lua)
 ```lua
 
 VISUAL3D2D:CreateFont( "ARIAL2" , 40 , 800 )
