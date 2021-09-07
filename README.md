@@ -1,5 +1,9 @@
 # VISUAL3D2D
-Небольшая библиотека графическая библиотека.
+[RUS]
+Небольшая графическая библиотека для отображения текста или информации.
+[ENG]
+A small graphics library for displaying text or information.
+-------------
 ```lua
 
 VISUAL3D2D:CreateFont( "ARIAL2" , 40 , 800 )
