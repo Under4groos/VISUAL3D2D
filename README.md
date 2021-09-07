@@ -2,7 +2,7 @@
 Небольшая графическая библиотека для отображения текста или информации.
 ## Инструкция по установке 
 Скопируйте файл [VISUAL3D2D.lua](../master/VISUAL3D2D.lua) в папку addons/VISUAL3D2D/lua/autorun/VISUAL3D2D.lua
-и добавте [AddCSLuaFile](https://wiki.facepunch.com/gmod/Global.AddCSLuaFile) 
+и добавте в [AddCSLuaFile](https://wiki.facepunch.com/gmod/Global.AddCSLuaFile).
 ```lua
 
 VISUAL3D2D:CreateFont( "ARIAL2" , 40 , 800 )
