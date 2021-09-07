@@ -1,7 +1,7 @@
 # VISUAL3D2D 
-[RUS]
+## [RUS]
 Небольшая графическая библиотека для отображения текста или информации.
-[ENG]
+## [ENG]
 A small graphics library for displaying text or information.
 -------------
 ```lua
