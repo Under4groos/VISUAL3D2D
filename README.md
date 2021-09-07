@@ -9,6 +9,7 @@ A small graphics library for displaying text or information.
 VISUAL3D2D:CreateFont( "ARIAL2" , 40 , 800 )
 
 local vecto = Vector(-7541.427734375,-11936.412109375,-12958.987304688 + 40)
+
 VISUAL3D2D:CreatePanel(1 )
 VISUAL3D2D:SetGlobalPosVector(1 , vecto )
 VISUAL3D2D:SetColor(1, Color(255 ,44,255 ) , Color(44,44,44,200) )
