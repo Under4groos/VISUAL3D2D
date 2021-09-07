@@ -1,7 +1,7 @@
 ## VISUAL3D2D 
 Небольшая графическая библиотека для отображения текста или информации.
 ## Инструкция по установке 
-[VISUAL3D2D.lua](../master/VISUAL3D2D.lua)
+Скопируйте файл [VISUAL3D2D.lua](../master/VISUAL3D2D.lua) в папку  VISUAL3D2D/lua/autorun/VISUAL3D2D.lua
 ```lua
 
 VISUAL3D2D:CreateFont( "ARIAL2" , 40 , 800 )
