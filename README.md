@@ -1,5 +1,4 @@
-## garry's mod 
-## VISUAL3D2D 
+ ## VISUAL3D2D garry's mod 
 Небольшая графическая библиотека для отображения текста,картинок или какой либо информации.
 ## Инструкция по установке 
 Скопируйте файл [VISUAL3D2D.lua](../master/VISUAL3D2D.lua) в папку addons/VISUAL3D2D/lua/autorun/VISUAL3D2D.lua
