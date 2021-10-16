@@ -53,11 +53,12 @@
 	 self.UIelement[ID] = {
 		 ISVALID = true,
 		 TYPE = self.TYPES[1],
- 
+		 PARENT_ENT = nil,
+
 		 LOCAL_POSITION = {0,0},
-		 GLOABAL_POSITION = LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
+		 GLOABAL_POSITION = Vector(0,0,0), --LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
 		 ANG = Angle(0,0,0),
-		 
+
  
 		 TEXT = "<nil>",
 		 FONT = "ARIAL",
@@ -71,9 +72,10 @@
 	 self.UIelement[ID] = {
 		 ISVALID = true,
 		 TYPE = self.TYPES[2],
- 
+		 PARENT_ENT = nil,
+
 		 LOCAL_POSITION = {0,0},
-		 GLOABAL_POSITION = LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
+		 GLOABAL_POSITION = Vector(0,0,0), --LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
 		 ANG = Angle(0,0,0),
 		 SIZE = {100,25},
  
@@ -88,9 +90,10 @@
 	 self.UIelement[ID] = {
 		 ISVALID = true,
 		 TYPE = self.TYPES[3],
- 
+		 PARENT_ENT = nil,
+
 		 LOCAL_POSITION = {0,0},
-		 GLOABAL_POSITION = LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
+		 GLOABAL_POSITION = Vector(0,0,0), --LocalPlayer():GetEyeTrace().HitPos + Vector(0, 0, 25),
 		 ANG = Angle(0,0,0),
 		 SIZE = {100,25},
  
@@ -255,6 +258,17 @@
 	 if( not VISUAL3D2D:IsValid( ID ) ) then	return Angle(0,0,0) end 	 
 	 return self.UIelement[ID].ANG  
  end
+
+ function VISUAL3D2D:PatentTo( ID , ent )
+	if( not VISUAL3D2D:IsValid( ID ) ) then	return  end 	
+	self.UIelement[ID].PARENT_ENT = ent  
+	 
+ end
+ function VISUAL3D2D:GetPatent( ID  )
+	if( not VISUAL3D2D:IsValid( ID ) ) then	return nil end 	
+	return self.UIelement[ID].PARENT_ENT 
+	 
+ end
  function VISUAL3D2D:SetGlobalPos( ID , x , y , z )
 	 if( not VISUAL3D2D:IsValid( ID ) ) then	return false end 	 
 	 
@@ -391,17 +405,27 @@
  end )
   
  
- hook.Remove("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw")
- hook.Add("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw", function()
+ hook.Remove("HUDPaint", "VISUAL3D2DPostDraw")
+ hook.Add("HUDPaint", "VISUAL3D2DPostDraw", function()
 	 if( not VISUAL3D2D.ISDRAW ) then return end 
  
 	 
  
 	 local scale = 0.1
-	 for ID=1,VISUAL3D2D:GetCount() do
-		 if( not VISUAL3D2D:IsValid( ID ) ) then	continue  end 
- 
-		 local gp =  VISUAL3D2D:GetGlobalPos(ID)
+	 for ID=0,VISUAL3D2D:GetCount() do
+		 draw.NoTexture()
+		 if( not VISUAL3D2D:IsValid( ID ) ) then continue  end 
+		 local gp = Vector(0,0,0)
+		 local ag = Angle(0,0,0)
+		 if( VISUAL3D2D:GetPatent( ID  ) ) then 
+			
+			VISUAL3D2D:SetGlobalPosVector(ID , VISUAL3D2D:GetPatent( ID  ):GetPos() )
+			
+			VISUAL3D2D:SetAngle( ID , VISUAL3D2D:GetPatent( ID  ):GetAngles() )
+		 end
+
+		 gp =  VISUAL3D2D:GetGlobalPos(ID)
+		 
 		 local ag =  VISUAL3D2D:GetAngle( ID )
 		 cam.Start3D2D(gp , ag, scale )
  
@@ -487,7 +511,7 @@
 				 "Size: [" .. size_[1].. "," .. size_[2] .. "]" .. "  Ang: [" .. ag[1].. "," .. ag[2] .. "," .. ag[3] .. "]",
 				 "IsHover: " .. tostring(ishovered)
 			 } 
-			 
+			  
 		 cam.End3D2D()
 	 end	 
  end )
