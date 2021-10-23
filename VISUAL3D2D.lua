@@ -2,6 +2,7 @@
  VISUAL3D2D = VISUAL3D2D or {}
  VISUAL3D2D.UIelement =  {}
  VISUAL3D2D.ISDRAW = true
+ VISUAL3D2D.debugmode = true 
  VISUAL3D2D.ISDRAW_information = false
  VISUAL3D2D.TYPES = {
 	 "LABEL",
@@ -32,9 +33,22 @@
 	  
 	 chat.AddText( color,  "[VISUAL3D2D] " , Color(70,255,255) , string )
  end
- function VISUAL3D2D:GetCount()
-	 return table.Count(self.UIelement)
+
+function VISUAL3D2D.ClearAll()
+	VISUAL3D2D.UIelement = {}
+end
+
+ function  VISUAL3D2D:GetCount()
+	local count = 0
+	for key, value in pairs(self.UIelement) do
+		if( value != nil) then 
+			count = count + 1
+		end
+	end
+	 return count -- table.Count(self.UIelement)
  end
+
+ 
  function VISUAL3D2D:GetType(ID)
 	 if( not VISUAL3D2D:IsValid( ID ) ) then	return "nil" end 	 
 	 return self.UIelement[ID].TYPE
@@ -373,6 +387,30 @@
 		 self.UIelement[ID].BROWSER:SetHTML(html_ .. code)		 
 	 end 
  end
+function VISUAL3D2D:SetImage( ID , url_img , w, h )
+	w = w or 100
+	h = h or 100
+	if( not VISUAL3D2D:IsValid( ID ) ) then	return end 	 	
+	if( VISUAL3D2D:IsType(ID , 3) ) then 	
+		local html_ = string.Replace(string.Replace(string.Replace(
+			[[<style type="text/css">body {overflow-y: hidden;overflow-x: hidden;}</style> <img src="_img_" width="_w_" height="_h_"/>]], 
+			"_w_", 
+			w
+		),"_h_" , h ),"_img_" , url_img)
+		chat.AddText(html_)
+		self.UIelement[ID].BROWSER:SetHTML(html_)		 
+	end 
+end
+function VISUAL3D2D:OpenURL( ID , url )
+	if( not VISUAL3D2D:IsValid( ID ) ) then	return end 	 	
+	if( VISUAL3D2D:IsType(ID , 3) ) then 			 
+		self.UIelement[ID].BROWSER:OpenURL( url )	 
+		-- <a href="https://www.freecodecamp.org/">freeCodeCamp</a>
+
+		--self.UIelement[ID].BROWSER:SetHTML(  string.Replace([[<a href="_url_"></a>]] , "_url_" ,url )  )	
+	end 
+end
+
  function VISUAL3D2D:DrawHTMLManual( ID)
 	 if( not VISUAL3D2D:IsValid( ID ) ) then	return end 	 	
 	 if( VISUAL3D2D:IsType(ID , 3) ) then 	
@@ -408,112 +446,126 @@
  hook.Remove("HUDPaint", "VISUAL3D2DPostDraw")
  hook.Add("HUDPaint", "VISUAL3D2DPostDraw", function()
 	 if( not VISUAL3D2D.ISDRAW ) then return end 
- 
-	 
- 
 	 local scale = 0.1
-	 for ID=0,VISUAL3D2D:GetCount() do
-		 draw.NoTexture()
-		 if( not VISUAL3D2D:IsValid( ID ) ) then continue  end 
-		 local gp = Vector(0,0,0)
-		 local ag = Angle(0,0,0)
-		 if( VISUAL3D2D:GetPatent( ID  ) ) then 
-			
-			VISUAL3D2D:SetGlobalPosVector(ID , VISUAL3D2D:GetPatent( ID  ):GetPos() )
-			
-			VISUAL3D2D:SetAngle( ID , VISUAL3D2D:GetPatent( ID  ):GetAngles() )
-		 end
+ 
+	for ID, value in pairs(VISUAL3D2D.UIelement) do
+		draw.NoTexture()
+		--if( not VISUAL3D2D:IsValid( ID ) ) then continue  end 
+		local gp = Vector(0,0,0)
+		local ag = Angle(0,0,0)
+		if( IsValid(VISUAL3D2D:GetPatent( ID  )) ) then 
+		   
+		   VISUAL3D2D:SetGlobalPosVector(ID , VISUAL3D2D:GetPatent( ID  ):GetPos() )
+		   
+		   VISUAL3D2D:SetAngle( ID , VISUAL3D2D:GetPatent( ID  ):GetAngles() )
+		end
 
-		 gp =  VISUAL3D2D:GetGlobalPos(ID)
-		 
-		 local ag =  VISUAL3D2D:GetAngle( ID )
-		 cam.Start3D2D(gp , ag, scale )
- 
-			 local cur_pos = VISUAL3D2D:GetCursorPosition(gp , ag , scale)
-			 local type_ = VISUAL3D2D:GetType(ID)
-			 local color_
- 
-			 local pos_
-			 local ishovered = false
-			 local size_ = {0,0}
-			 if( cur_pos.x !=0 and cur_pos.y != 0 && VISUAL3D2D.ISDRAW_information ) then 
-				 local size = 24
-				 draw.RoundedBox( 0, cur_pos.x - size/2, cur_pos.y , size,1, Color(55, 255, 255, 255) )	
-				 draw.RoundedBox( 0, cur_pos.x , cur_pos.y - size / 2, 1,size, Color(55, 255, 255, 255) )	
-				 
-				 draw.DrawText( "X:" .. cur_pos.x .. "\nY:" .. cur_pos.y, "informa", cur_pos.x + 10,cur_pos.y + 10, color_white )
-			 end
-			 
-			 
- 
-			 if( type_ == VISUAL3D2D.TYPES[1] ) then 
-				 color_ = VISUAL3D2D:GetTextColor( ID )
-				 pos_ = VISUAL3D2D:GetLocalPos(ID)
-				 size_ = VISUAL3D2D:GetTextSize( ID , VISUAL3D2D:GetFont(ID) )
- 
-				 
-				 ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
-				 if( ishovered ) then 
-					 draw.SimpleText( VISUAL3D2D:GetText(ID), VISUAL3D2D:GetFont(ID), pos_[1], pos_[2], color_[2] )
-					 if( VISUAL3D2D.MOUSE.pressed && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
- 
-						 VISUAL3D2D.UIelement[ID].Click()
-						 VISUAL3D2D.MOUSE.pressed = false
-					 end
-				 else
-					 draw.SimpleText( VISUAL3D2D:GetText(ID), VISUAL3D2D:GetFont(ID), pos_[1], pos_[2], color_[1] )
-				 end
- 
-			 elseif( type_ == VISUAL3D2D.TYPES[2] ) then
- 
-				 color_ = VISUAL3D2D:GetColor( ID )
-				 pos_ = VISUAL3D2D:GetLocalPos(ID)
-				 size_ = VISUAL3D2D:GetSize(ID)
-				 ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
- 
- 
-				 if( ishovered ) then 
-					 draw.RoundedBox( VISUAL3D2D:GetCornerRadius(ID), pos_[1], pos_[2], size_[1] , size_[2], color_[2] )
-					 if( VISUAL3D2D.MOUSE.pressed  && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
-						 VISUAL3D2D.UIelement[ID].Click()
-						  
-						 VISUAL3D2D.MOUSE.pressed = false		
+		gp =  VISUAL3D2D:GetGlobalPos(ID)
+		
+		local ag =  VISUAL3D2D:GetAngle( ID )
+		cam.Start3D2D(gp , ag, scale )
+
+			local cur_pos = VISUAL3D2D:GetCursorPosition(gp , ag , scale)
+			local type_ = VISUAL3D2D:GetType(ID)
+			local color_
+
+			local pos_
+			local ishovered = false
+			local size_ = {0,0}
+			if( cur_pos.x !=0 and cur_pos.y != 0 && VISUAL3D2D.ISDRAW_information ) then 
+				local size = 24
+				draw.RoundedBox( 0, cur_pos.x - size/2, cur_pos.y , size,1, Color(55, 255, 255, 255) )	
+				draw.RoundedBox( 0, cur_pos.x , cur_pos.y - size / 2, 1,size, Color(55, 255, 255, 255) )	
+				
+				draw.DrawText( "X:" .. cur_pos.x .. "\nY:" .. cur_pos.y, "informa", cur_pos.x + 10,cur_pos.y + 10, color_white )
+			end
+
+			pos_ = VISUAL3D2D:GetLocalPos(ID)
+			size_ = VISUAL3D2D:GetSize(ID)
+			ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
+			--chat.AddText(ishovered)
+			draw.RoundedBox( 0, pos_[1], pos_[2], size_[1] , size_[2], Color(55, 255, 255, 255) )
+
+			if(  VISUAL3D2D.debugmode ) then 
+				
+				--surface.SetDrawColor( 0, 225, 255, 255)
+				--surface.DrawOutlinedRect( 0, 0, 100 , 100 , 5)
+			end 
+
+
+			if( type_ == VISUAL3D2D.TYPES[1] ) then 
+				color_ = VISUAL3D2D:GetTextColor( ID )
+				pos_ = VISUAL3D2D:GetLocalPos(ID)
+				size_ = VISUAL3D2D:GetTextSize( ID , VISUAL3D2D:GetFont(ID) )
+
+				
+				ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
+				if( ishovered ) then 
+					draw.SimpleText( VISUAL3D2D:GetText(ID), VISUAL3D2D:GetFont(ID), pos_[1], pos_[2], color_[2] )
+					if( VISUAL3D2D.MOUSE.pressed && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
+
+						VISUAL3D2D.UIelement[ID].Click()
+						VISUAL3D2D.MOUSE.pressed = false
+					end
+				else
+					draw.SimpleText( VISUAL3D2D:GetText(ID), VISUAL3D2D:GetFont(ID), pos_[1], pos_[2], color_[1] )
+				end
+
+			elseif( type_ == VISUAL3D2D.TYPES[2] ) then
+
+				color_ = VISUAL3D2D:GetColor( ID )
+				pos_ = VISUAL3D2D:GetLocalPos(ID)
+				size_ = VISUAL3D2D:GetSize(ID)
+				ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
+
+
+				if( ishovered ) then 
+					draw.RoundedBox( VISUAL3D2D:GetCornerRadius(ID), pos_[1], pos_[2], size_[1] , size_[2], color_[2] )
+					if( VISUAL3D2D.MOUSE.pressed  && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
+						VISUAL3D2D.UIelement[ID].Click()
+						 
+						VISUAL3D2D.MOUSE.pressed = false		
+							
+					end
+				else
+
+					draw.RoundedBox( VISUAL3D2D:GetCornerRadius(ID), pos_[1], pos_[2], size_[1] , size_[2], color_[1] )		
 							 
-					 end
-				 else
- 
-					 draw.RoundedBox( VISUAL3D2D:GetCornerRadius(ID), pos_[1], pos_[2], size_[1] , size_[2], color_[1] )		
-							  
-				 end
-			 elseif(type_ == VISUAL3D2D.TYPES[3] ) then
-				  
-				 VISUAL3D2D:DrawHTMLManual(ID)
- 
- 
-				 pos_ = VISUAL3D2D:GetLocalPos(ID)
-				 size_ = VISUAL3D2D:GetSize(ID)
- 
-				 ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
-				 if( ishovered ) then 
-					  
-					 if( VISUAL3D2D.MOUSE.pressed && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
- 
-						 VISUAL3D2D.UIelement[ID].Click()
-						 VISUAL3D2D.MOUSE.pressed = false
-					 end
-				  
-				 end
-			 end
+				end
+			elseif(type_ == VISUAL3D2D.TYPES[3] ) then
+				 
+				VISUAL3D2D:DrawHTMLManual(ID)
+
+
+				pos_ = VISUAL3D2D:GetLocalPos(ID)
+				size_ = VISUAL3D2D:GetSize(ID)
+
+				ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
+				if( ishovered ) then 
+					 
+					if( VISUAL3D2D.MOUSE.pressed && VISUAL3D2D.UIelement[ID].Click !=nil ) then 
+
+						VISUAL3D2D.UIelement[ID].Click()
+						VISUAL3D2D.MOUSE.pressed = false
+					end
+				 
+				end
+			end
+			
+			VISUAL3D2D.DRAWINF[ID] = {
+				"Panel[" .. ID.. "]" .. " Type: " .. type_,
+				"PosPanel: " .. pos_[1] .. " " .. pos_[2] ,
+				"Size: [" .. size_[1].. "," .. size_[2] .. "]" .. "  Ang: [" .. ag[1].. "," .. ag[2] .. "," .. ag[3] .. "]",
+				"IsHover: " .. tostring(ishovered)
+			} 
 			 
-			 VISUAL3D2D.DRAWINF[ID] = {
-				 "Panel[" .. ID.. "]" .. " Type: " .. type_,
-				 "PosPanel: " .. pos_[1] .. " " .. pos_[2] ,
-				 "Size: [" .. size_[1].. "," .. size_[2] .. "]" .. "  Ang: [" .. ag[1].. "," .. ag[2] .. "," .. ag[3] .. "]",
-				 "IsHover: " .. tostring(ishovered)
-			 } 
-			  
-		 cam.End3D2D()
-	 end	 
+		cam.End3D2D()
+	end
+
+
+
+
+	 	 
  end )
  
   
