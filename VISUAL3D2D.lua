@@ -2,8 +2,8 @@
  VISUAL3D2D = VISUAL3D2D or {}
  VISUAL3D2D.UIelement =  {}
  VISUAL3D2D.ISDRAW = true
- VISUAL3D2D.debugmode = true 
- VISUAL3D2D.ISDRAW_information = true
+ VISUAL3D2D.debugmode = false 
+ VISUAL3D2D.ISDRAW_information = false
  VISUAL3D2D.TYPES = {
 	 "LABEL",
 	 "PANEL",
@@ -545,6 +545,7 @@ end
 			} 
 			if( cur_pos.x !=0 and cur_pos.y != 0 && VISUAL3D2D.ISDRAW_information ) then 
 				local size = 24
+				
 				draw.RoundedBox( 0, cur_pos.x - size/2, cur_pos.y , size,1, Color(55, 255, 255, 255) )	
 				draw.RoundedBox( 0, cur_pos.x , cur_pos.y - size / 2, 1,size, Color(55, 255, 255, 255) )	
 				
