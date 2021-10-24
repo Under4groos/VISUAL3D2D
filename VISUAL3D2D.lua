@@ -3,7 +3,7 @@
  VISUAL3D2D.UIelement =  {}
  VISUAL3D2D.ISDRAW = true
  VISUAL3D2D.debugmode = true 
- VISUAL3D2D.ISDRAW_information = false
+ VISUAL3D2D.ISDRAW_information = true
  VISUAL3D2D.TYPES = {
 	 "LABEL",
 	 "PANEL",
@@ -443,13 +443,13 @@ end
  end )
   
  
- hook.Remove("HUDPaint", "VISUAL3D2DPostDraw")
- hook.Add("HUDPaint", "VISUAL3D2DPostDraw", function()
+ hook.Remove("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw")
+ hook.Add("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw", function()
 	 if( not VISUAL3D2D.ISDRAW ) then return end 
 	 local scale = 0.1
  
 	for ID, value in pairs(VISUAL3D2D.UIelement) do
-		draw.NoTexture()
+		--draw.NoTexture()
 		--if( not VISUAL3D2D:IsValid( ID ) ) then continue  end 
 		local gp = Vector(0,0,0)
 		local ag = Angle(0,0,0)
@@ -472,25 +472,8 @@ end
 			local pos_
 			local ishovered = false
 			local size_ = {0,0}
-			if( cur_pos.x !=0 and cur_pos.y != 0 && VISUAL3D2D.ISDRAW_information ) then 
-				local size = 24
-				draw.RoundedBox( 0, cur_pos.x - size/2, cur_pos.y , size,1, Color(55, 255, 255, 255) )	
-				draw.RoundedBox( 0, cur_pos.x , cur_pos.y - size / 2, 1,size, Color(55, 255, 255, 255) )	
-				
-				draw.DrawText( "X:" .. cur_pos.x .. "\nY:" .. cur_pos.y, "informa", cur_pos.x + 10,cur_pos.y + 10, color_white )
-			end
-
-			pos_ = VISUAL3D2D:GetLocalPos(ID)
-			size_ = VISUAL3D2D:GetSize(ID)
-			ishovered = VISUAL3D2D:IsHovering(cur_pos, pos_[1], pos_[2], size_[1] , size_[2])
-			--chat.AddText(ishovered)
-			draw.RoundedBox( 0, pos_[1], pos_[2], size_[1] , size_[2], Color(55, 255, 255, 255) )
-
-			if(  VISUAL3D2D.debugmode ) then 
-				
-				--surface.SetDrawColor( 0, 225, 255, 255)
-				--surface.DrawOutlinedRect( 0, 0, 100 , 100 , 5)
-			end 
+			
+ 
 
 
 			if( type_ == VISUAL3D2D.TYPES[1] ) then 
@@ -511,7 +494,8 @@ end
 					draw.SimpleText( VISUAL3D2D:GetText(ID), VISUAL3D2D:GetFont(ID), pos_[1], pos_[2], color_[1] )
 				end
 
-			elseif( type_ == VISUAL3D2D.TYPES[2] ) then
+			end
+			if( type_ == VISUAL3D2D.TYPES[2] ) then
 
 				color_ = VISUAL3D2D:GetColor( ID )
 				pos_ = VISUAL3D2D:GetLocalPos(ID)
@@ -532,7 +516,8 @@ end
 					draw.RoundedBox( VISUAL3D2D:GetCornerRadius(ID), pos_[1], pos_[2], size_[1] , size_[2], color_[1] )		
 							 
 				end
-			elseif(type_ == VISUAL3D2D.TYPES[3] ) then
+			end
+			if(type_ == VISUAL3D2D.TYPES[3] ) then
 				 
 				VISUAL3D2D:DrawHTMLManual(ID)
 
@@ -550,7 +535,7 @@ end
 					end
 				 
 				end
-			end
+			end 
 			
 			VISUAL3D2D.DRAWINF[ID] = {
 				"Panel[" .. ID.. "]" .. " Type: " .. type_,
@@ -558,7 +543,13 @@ end
 				"Size: [" .. size_[1].. "," .. size_[2] .. "]" .. "  Ang: [" .. ag[1].. "," .. ag[2] .. "," .. ag[3] .. "]",
 				"IsHover: " .. tostring(ishovered)
 			} 
-			 
+			if( cur_pos.x !=0 and cur_pos.y != 0 && VISUAL3D2D.ISDRAW_information ) then 
+				local size = 24
+				draw.RoundedBox( 0, cur_pos.x - size/2, cur_pos.y , size,1, Color(55, 255, 255, 255) )	
+				draw.RoundedBox( 0, cur_pos.x , cur_pos.y - size / 2, 1,size, Color(55, 255, 255, 255) )	
+				
+				draw.DrawText( "X:" .. cur_pos.x .. "\nY:" .. cur_pos.y, "informa", cur_pos.x + 10,cur_pos.y + 10, color_white )
+			end 
 		cam.End3D2D()
 	end
 
