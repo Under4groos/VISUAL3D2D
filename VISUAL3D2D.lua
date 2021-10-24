@@ -1,6 +1,6 @@
 
  VISUAL3D2D = VISUAL3D2D or {}
- VISUAL3D2D.UIelement =  {}
+ VISUAL3D2D.UIelement =  VISUAL3D2D.UIelement or {}
  VISUAL3D2D.ISDRAW = true
  VISUAL3D2D.debugmode = false 
  VISUAL3D2D.ISDRAW_information = false
@@ -12,6 +12,9 @@
  VISUAL3D2D.DRAWINF = {}
  VISUAL3D2D.MOUSE   = {}
  
+ local gaycvar = CreateClientConVar( "show_visual3d2d", "1", true, false)
+
+
  function VISUAL3D2D:CreateFont( name , si , we)
 	 we = we or 600
 	 si = si or 17
@@ -35,7 +38,16 @@
  end
 
 function VISUAL3D2D.ClearAll()
+	chat.AddText("Clear UIelement " .. table.Count(VISUAL3D2D.UIelement))
+	for ID,k in pairs(VISUAL3D2D.UIelement) do 
+		if( not VISUAL3D2D:IsValid( ID ) ) then	return end 	 	
+	 	if( VISUAL3D2D:IsType(ID , 3) ) then 
+			VISUAL3D2D.UIelement[ID].BROWSER:Remove()
+			VISUAL3D2D.UIelement[ID].BROWSER:Clear()
+		end
+	end 
 	VISUAL3D2D.UIelement = {}
+	
 end
 
  function  VISUAL3D2D:GetCount()
@@ -413,7 +425,7 @@ end
 
  function VISUAL3D2D:DrawHTMLManual( ID)
 	 if( not VISUAL3D2D:IsValid( ID ) ) then	return end 	 	
-	 if( VISUAL3D2D:IsType(ID , 3) ) then 	
+	 if( VISUAL3D2D:IsType(ID , 3) && self.UIelement[ID].BROWSER != nil) then 	
 		  
 		 self.UIelement[ID].BROWSER:PaintManual() 	 
 	 end 
@@ -445,7 +457,7 @@ end
  
  hook.Remove("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw")
  hook.Add("PostDrawOpaqueRenderables", "VISUAL3D2DPostDraw", function()
-	 if( not VISUAL3D2D.ISDRAW ) then return end 
+	 if( not gaycvar:GetBool() ) then return end 
 	 local scale = 0.1
  
 	for ID, value in pairs(VISUAL3D2D.UIelement) do
