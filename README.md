@@ -43,3 +43,5 @@
  end)
  
 ```
+# License
+MIT - do whatever you want.
